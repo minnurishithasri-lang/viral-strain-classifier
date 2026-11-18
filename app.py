@@ -51,7 +51,7 @@ else:
             st.error(f"Could not read FASTA file: {exc}")
 
 st.subheader("2. Reference database")
-reference_path = Path(__file__).parent / "data" / "reference_sequences.fasta"
+reference_path = Path(__file__).parent / "reference_sequences.fasta"
 try:
     references = load_reference_fasta(reference_path)
     st.info(f"{len(references)} reference sequences loaded from the bundled FASTA file.")
