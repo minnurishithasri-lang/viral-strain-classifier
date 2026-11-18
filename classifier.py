@@ -52,19 +52,33 @@ def parse_uploaded_fasta(file_bytes):
 
 
 def sequence_identity(query: str, reference: str) -> float:
-    """
-    Calculate percent identity from a global pairwise alignment.
-    Uses Biopython pairwise2 globalxx; matches score 1, mismatches/gaps score 0.
-    """
-    alignments = pairwise2.align.globalxx(
-        query, reference, one_alignment_only=True
+
+    alignments = pairwise2.align.globalms(
+        query,
+        reference,
+        2,
+        -1,
+        -2,
+        -0.5,
+        one_alignment_only=True
     )
+
     if not alignments:
         return 0.0
 
     alignment = alignments[0]
+
     aligned_query = alignment.seqA
     aligned_reference = alignment.seqB
+
+    matches = sum(
+        a == b and a != "-"
+        for a, b in zip(aligned_query, aligned_reference)
+    )
+
+    alignment_length = len(aligned_query)
+
+    return (matches / alignment_length) * 100
 
     comparable_columns = 0
     identical_columns = 0
