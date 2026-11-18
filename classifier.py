@@ -51,6 +51,7 @@ def parse_uploaded_fasta(file_bytes):
     return records
 
 
+
 def sequence_identity(query: str, reference: str) -> float:
 
     alignments = pairwise2.align.globalms(
@@ -71,26 +72,21 @@ def sequence_identity(query: str, reference: str) -> float:
     aligned_query = alignment.seqA
     aligned_reference = alignment.seqB
 
-    matches = sum(
-        a == b and a != "-"
-        for a, b in zip(aligned_query, aligned_reference)
-    )
+    matches = 0
+
+    for a, b in zip(aligned_query, aligned_reference):
+        if a == b and a != "-" and b != "-":
+            matches += 1
 
     alignment_length = len(aligned_query)
 
-    return (matches / alignment_length) * 100
-
-    comparable_columns = 0
-    identical_columns = 0
-    for q_base, r_base in zip(aligned_query, aligned_reference):
-        if q_base != "-" and r_base != "-":
-            comparable_columns += 1
-            if q_base == r_base:
-                identical_columns += 1
-
-    if comparable_columns == 0:
+    if alignment_length == 0:
         return 0.0
-    return (identical_columns / comparable_columns) * 100
+
+    similarity = (matches / alignment_length) * 100
+
+    return similarity
+
 
 
 def analyze_sequence(query: str, references: dict) -> dict:
